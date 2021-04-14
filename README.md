@@ -67,7 +67,7 @@ const abilityFactory = new AbilityFactory({
 });
 
 // Create ability for a user
-const ability: Ability = abilityFactory.create(user);
+const ability: Ability = abilityFactory.createForUser(user);
 
 // Different ways to assign subject
 ability.can('create', 'Post'); // By subject name
@@ -87,4 +87,4 @@ ability.cannot('update', postB) // true
 
 ## License
 
-[MIT](https://github.com/pramindanata/policy-authorization)
+[MIT](https://github.com/pramindanata/policy-authorization/blob/master/LICENSE)

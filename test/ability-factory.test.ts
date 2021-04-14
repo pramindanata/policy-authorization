@@ -19,7 +19,7 @@ describe('# AbilityFactory', () => {
 
   describe('## create()', () => {
     it('should return Ability instance', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
 
       expect(ability).toBeInstanceOf(Ability);
     });
@@ -27,7 +27,7 @@ describe('# AbilityFactory', () => {
     it('should pass user and resolved policies dict to ability ctor', () => {
       const abilityCtorMock = Ability as jest.Mock;
 
-      factory.create(user);
+      factory.createForUser(user);
 
       expect(abilityCtorMock.mock.calls[0][0]).toEqual(user);
       expect(abilityCtorMock.mock.calls[0][1]).toEqual({

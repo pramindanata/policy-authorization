@@ -21,21 +21,21 @@ describe('# Ability', () => {
 
   describe('## can', () => {
     it('should return true on action "view" by passing subject name', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = ability.can('view', 'Book');
 
       expect(result).toEqual(true);
     });
 
     it('should return true on action "view" by passing subject instance', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = ability.can('view', book);
 
       expect(result).toEqual(true);
     });
 
     it('should return true on action "view" by passing subject constructor', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = ability.can('view', Book);
 
       expect(result).toEqual(true);
@@ -44,28 +44,28 @@ describe('# Ability', () => {
     it('should throw error if policy not found', () => {
       class OtherModel {}
 
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = () => ability.can('view', OtherModel);
 
       expect(result).toThrow(PolicyNotFoundException);
     });
 
     it('should throw error if invalid action given', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = () => ability.can('do-something', book);
 
       expect(result).toThrow(ActionNotFoundException);
     });
 
     it('should return true on action "update" with correct book', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const result = ability.can('update', book);
 
       expect(result).toEqual(true);
     });
 
     it('should return false on action "update" with invalid book', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const otherBook = new Book({ id: 1, name: 'Book B', userId: 200 });
       const result = ability.can('update', otherBook);
 
@@ -75,7 +75,7 @@ describe('# Ability', () => {
 
   describe('## cannot', () => {
     it('should call negative this.can()', () => {
-      const ability = factory.create(user);
+      const ability = factory.createForUser(user);
       const canMethodMockValue = true;
 
       jest.spyOn(ability, 'can').mockReturnValueOnce(canMethodMockValue);

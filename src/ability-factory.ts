@@ -4,7 +4,7 @@ import { Ctor } from './common';
 export class AbilityFactory {
   constructor(private subjectPolicyCtorDict: SubjectPolicyCtorDict) {}
 
-  create(user: Record<any, any>): Ability {
+  createForUser(user: Record<any, any>): Ability {
     const resolvedPolicies = this.resolvePolicies();
 
     return new Ability(user, resolvedPolicies);
