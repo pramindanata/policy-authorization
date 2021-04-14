@@ -3,15 +3,15 @@ import { AnyFunction, Ctor } from './common';
 export class Ability {
   constructor(
     private user: Record<any, any>,
-    private modelPolicyDict: ModelPolicyDict,
+    private subjectPolicyDict: SubjectPolicyDict,
   ) {}
 
-  can<M>(action: string, model: PolicyModel<M>): boolean {
-    const modelName = this.getModelName(model);
-    const policy = this.modelPolicyDict[modelName];
+  can<S>(action: string, subject: InferSubject<S>): boolean {
+    const subjectName = this.getSubjectName(subject);
+    const policy = this.subjectPolicyDict[subjectName];
 
     if (!policy) {
-      throw new PolicyNotFoundException(modelName);
+      throw new PolicyNotFoundException(subjectName);
     }
 
     const policyMethod = policy[action] as AnyFunction<boolean>;
@@ -20,29 +20,29 @@ export class Ability {
       throw new ActionNotFoundException(action);
     }
 
-    return policyMethod.apply(policy, [this.user, model]);
+    return policyMethod.apply(policy, [this.user, subject]);
   }
 
-  cant<M>(action: string, model: PolicyModel<M>): boolean {
-    return !this.can(action, model);
+  cant<S>(action: string, subject: InferSubject<S>): boolean {
+    return !this.can(action, subject);
   }
 
-  private getModelName(model: PolicyModel<any>): string {
-    if (typeof model === 'string') {
-      return model;
+  private getSubjectName(subject: InferSubject<any>): string {
+    if (typeof subject === 'string') {
+      return subject;
     }
 
-    if (typeof model === 'object') {
-      return model.constructor.name;
+    if (typeof subject === 'object') {
+      return subject.constructor.name;
     }
 
-    return model.name;
+    return subject.name;
   }
 }
 
 export class PolicyNotFoundException extends Error {
-  constructor(model: string) {
-    super(`Policy for model "${model}" does not found`);
+  constructor(subject: string) {
+    super(`Policy for subject "${subject}" does not found`);
   }
 }
 
@@ -52,8 +52,8 @@ export class ActionNotFoundException extends Error {
   }
 }
 
-export interface ModelPolicyDict {
+export interface SubjectPolicyDict {
   [key: string]: Record<string, any>;
 }
 
-export type PolicyModel<M> = Ctor<M> | M | string;
+export type InferSubject<S> = Ctor<S> | S | string;

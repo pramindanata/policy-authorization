@@ -20,21 +20,21 @@ describe('# Ability', () => {
   });
 
   describe('## can', () => {
-    it('should return true on action "view" by passing model name', () => {
+    it('should return true on action "view" by passing subject name', () => {
       const ability = factory.create(user);
       const result = ability.can('view', 'Book');
 
       expect(result).toEqual(true);
     });
 
-    it('should return true on action "view" by passing model instance', () => {
+    it('should return true on action "view" by passing subject instance', () => {
       const ability = factory.create(user);
       const result = ability.can('view', book);
 
       expect(result).toEqual(true);
     });
 
-    it('should return true on action "view" by passing model constructor', () => {
+    it('should return true on action "view" by passing subject constructor', () => {
       const ability = factory.create(user);
       const result = ability.can('view', Book);
 

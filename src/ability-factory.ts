@@ -1,8 +1,8 @@
-import { Ability, ModelPolicyDict } from './ability';
+import { Ability, SubjectPolicyDict } from './ability';
 import { Ctor } from './common';
 
 export class AbilityFactory {
-  constructor(private modelPolicyCtorDict: ModelPolicyCtorDict) {}
+  constructor(private subjectPolicyCtorDict: SubjectPolicyCtorDict) {}
 
   create(user: Record<any, any>): Ability {
     const resolvedPolicies = this.resolvePolicies();
@@ -10,19 +10,19 @@ export class AbilityFactory {
     return new Ability(user, resolvedPolicies);
   }
 
-  private resolvePolicies(): ModelPolicyDict {
-    const resolvedPolicies: ModelPolicyDict = {};
+  private resolvePolicies(): SubjectPolicyDict {
+    const resolvedPolicies: SubjectPolicyDict = {};
 
-    for (const modelName in this.modelPolicyCtorDict) {
-      const ctor = this.modelPolicyCtorDict[modelName];
+    for (const subjectName in this.subjectPolicyCtorDict) {
+      const ctor = this.subjectPolicyCtorDict[subjectName];
 
-      resolvedPolicies[modelName] = new ctor();
+      resolvedPolicies[subjectName] = new ctor();
     }
 
     return resolvedPolicies;
   }
 }
 
-export interface ModelPolicyCtorDict {
+export interface SubjectPolicyCtorDict {
   [key: string]: Ctor;
 }
