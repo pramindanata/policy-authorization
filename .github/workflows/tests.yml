@@ -25,4 +25,4 @@ jobs:
       - name: Run Linter
         run: npm run lint -- --ext .js,.ts ./
       - name: Run Tests 
-        run: npm run test -- --runInBand
+        run: npm run test -- --runInBand --coverage --ci
