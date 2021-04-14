@@ -2,7 +2,11 @@
   "name": "policy-authorization",
   "version": "0.0.0",
   "description": "Policy based authorization inspired from Laravel",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*"
+  ],
   "scripts": {
     "build": "npm run clean && npm run tsc",
     "clean": "del-cli ./dist/*",
