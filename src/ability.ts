@@ -6,7 +6,7 @@ export class Ability {
     private subjectPolicyDict: SubjectPolicyDict,
   ) {}
 
-  can<S>(action: string, subject: InferSubject<S>): boolean {
+  can(action: string, subject: Subject): boolean {
     const subjectName = this.getSubjectName(subject);
     const policy = this.subjectPolicyDict[subjectName];
 
@@ -23,11 +23,11 @@ export class Ability {
     return policyMethod.apply(policy, [this.user, subject]);
   }
 
-  cannot<S>(action: string, subject: InferSubject<S>): boolean {
+  cannot(action: string, subject: Subject): boolean {
     return !this.can(action, subject);
   }
 
-  private getSubjectName(subject: InferSubject<any>): string {
+  private getSubjectName(subject: Subject): string {
     if (typeof subject === 'string') {
       return subject;
     }
@@ -56,4 +56,4 @@ export interface SubjectPolicyDict {
   [key: string]: Record<string, any>;
 }
 
-export type InferSubject<S> = Ctor<S> | S | string;
+export type Subject = Ctor<Record<string, any>> | Record<string, any> | string;

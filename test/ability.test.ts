@@ -52,7 +52,7 @@ describe('# Ability', () => {
 
     it('should throw error if invalid action given', () => {
       const ability = factory.create(user);
-      const result = () => ability.can('XXX', book);
+      const result = () => ability.can('do-something', book);
 
       expect(result).toThrow(ActionNotFoundException);
     });
