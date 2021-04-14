@@ -73,14 +73,14 @@ describe('# Ability', () => {
     });
   });
 
-  describe('## cant', () => {
+  describe('## cannot', () => {
     it('should call negative this.can()', () => {
       const ability = factory.create(user);
       const canMethodMockValue = true;
 
       jest.spyOn(ability, 'can').mockReturnValueOnce(canMethodMockValue);
 
-      const result = ability.cant('update', book);
+      const result = ability.cannot('update', book);
 
       expect(result).toEqual(!canMethodMockValue);
       expect(ability.can).toHaveBeenCalled();

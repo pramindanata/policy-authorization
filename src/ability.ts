@@ -23,7 +23,7 @@ export class Ability {
     return policyMethod.apply(policy, [this.user, subject]);
   }
 
-  cant<S>(action: string, subject: InferSubject<S>): boolean {
+  cannot<S>(action: string, subject: InferSubject<S>): boolean {
     return !this.can(action, subject);
   }
 
