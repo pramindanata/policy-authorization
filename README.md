@@ -2,7 +2,7 @@
 
 > Policy based authorization inspired from Laravel.
 
-![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/tests.yml/badge.svg)
+![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/build.yml/badge.svg)
 
 ## Description
 
