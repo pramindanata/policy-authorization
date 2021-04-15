@@ -1,27 +1,32 @@
 # Policy Authorization
 
-> Policy based authorization inspired from Laravel.
-
 ![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/build.yml/badge.svg)
+
+> Small policy based authorization library inspired from Laravel.
 
 ## Description
 
-This library provides you a way to organize authorization logic around a particular subject. For example, if your application is a blog, you may have a `Post` class to represent you post data and a corresponding `PostPolicy` class to authorize user actions such as creating or updating posts. This library was inspired from [Laravel's policies](https://laravel.com/docs/master/authorization#creating-policies) to handle authorization logic for corresponding data model.
+This library provides you a way to organize authorization logic around a particular subject. For example, if your application is a blog, you may have a `Post` class to represent you post data and a corresponding `PostPolicy` class to authorize user actions such as creating or updating posts. This library was inspired from [Laravel policies](https://laravel.com/docs/master/authorization#creating-policies) to handle authorization logic for corresponding data model.
 
-(WIP)
+There are 4 basic concept used in this library:
 
-## Getting Started
+- `Action`: User action on a subject, for example: `view`, `create`, or `update`.
+- `Subject`: The subject which you want to check user action on, for example a business entity (`User`, `Blog`, or `Product`).
+- `Policy`: Describe and organize authorization logic of user actions on corresponding subject.
+- `Ability`: It authorize user action on corresponding subject based on given policies.
 
-### Installation
+## Installation
 
 ```bash
 npm install policy-authorization
 ```
 
+## Usage
+
 ### Example
 
 ```ts
-import { Ability, AbilityFactory } from 'policy-authorization';
+import { Ability } from 'policy-authorization';
 
 // Your user class
 class User {
@@ -60,21 +65,13 @@ class PostPolicy {
 
 // Setup user and subject instances
 const user = new User({ id: 1, name: 'John' });
-const postA = new Post({id: 1, name: 'Post A', authorId, 1});
-const postB = new Post({id: 1, name: 'Post B', authorId, 17});
-
-// Create ability factory
-const abilityFactory = new AbilityFactory({
-  [Post.name]: PostPolicy
-});
+const postA = new Post({ id: 1, name: 'Post A', authorId, 1 });
+const postB = new Post({ id: 1, name: 'Post B', authorId, 17 });
 
 // Create ability for a user
-const ability: Ability = abilityFactory.createForUser(user);
-
-// Different ways to assign subject
-ability.can('create', 'Post'); // By subject name
-ability.can('create', Post); // By subject constructor
-ability.can('update', postA); // By subject instance
+const ability = new Ability(user, {
+  [Post.name]: new PostPolicy()
+});
 
 // Result
 ability.can('create', Post); // true
@@ -83,9 +80,35 @@ ability.can('update', postB); // false, Post B has different `authorId`
 ability.cannot('update', postB) // true
 ```
 
+### Creating Policy Class
+
+### Creating Ability
+
+### Using Factory for Creating Ability
+
+### Authorizing User Action
+
 ## API
 
-(WIP)
+### `Ability`
+
+#### `.can(action: string, subject: Subject): boolean`
+
+- `action`: User action, for example: `view`, `create`, or `update`.
+- `subject`: The subject which you want to check user action on. It receives subject name, subject instance, or subject constructor.
+
+Return `true` if user is authorized to do given action on given subject, otherwise return `false`.
+
+#### `.cannot(action: string, subject: Subject): boolean`
+
+- `action`: User action, for example: `view`, `create`, or `update`.
+- `subject`: The subject which you want to check user action on. It receives subject name, subject instance, or subject constructor.
+
+Return `true` if user is **not** authorized to do given action on given subject, otherwise return `false`.
+
+### `AbilityFactory`
+
+#### `.createForUser(user: Record<string, any>): Ability`
 
 ## License
 
