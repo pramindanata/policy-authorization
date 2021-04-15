@@ -1,9 +1,10 @@
 import {
+  Ability,
   AbilityFactory,
   ActionNotFoundException,
   PolicyNotFoundException,
 } from '../src';
-import { Book, BookPolicy, User } from './fake';
+import { Book, BookPolicy, BookPolicyWithBefore, User } from './fake';
 
 describe('# Ability', () => {
   let factory: AbilityFactory;
@@ -85,6 +86,28 @@ describe('# Ability', () => {
       expect(result).toEqual(!canMethodMockValue);
       expect(ability.can).toHaveBeenCalled();
       expect(ability.can).toHaveBeenCalledWith('update', book);
+    });
+  });
+
+  describe('## Pre-check authorization logic', () => {
+    it('should return true on action "create" if user is an ADMIN', () => {
+      const admin = new User({ id: 1, name: 'Admin', role: 'ADMIN' });
+      const ability = new Ability(admin, {
+        [Book.name]: new BookPolicyWithBefore(),
+      });
+      const result = ability.can('create', book);
+
+      expect(result).toEqual(true);
+    });
+
+    it('should return false on action "create" if user is an AUTHOR', () => {
+      const admin = new User({ id: 1, name: 'Admin', role: 'AUTHOR' });
+      const ability = new Ability(admin, {
+        [Book.name]: new BookPolicyWithBefore(),
+      });
+      const result = ability.can('create', book);
+
+      expect(result).toEqual(false);
     });
   });
 });

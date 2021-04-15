@@ -74,8 +74,6 @@ const ability = new Ability(user, {
 });
 
 // Result
-
-
 ability.can('update', postB); // false, Post B has different `authorId`
 ability.cannot('update', postB) // true
 ```
@@ -112,7 +110,7 @@ Policy class only contains authorization logic of any actions on corresponding s
 
 In the example above, `PostPolicy` has 5 actions (`viewAny`, `view`, `create`, `update`, and `delete`) for `Post` subject where `user` is the user instance and `post` is the subject instance.
 
-### Skipping Policy
+### Perform Pre-authorization Check
 
 `(WIP)`
 

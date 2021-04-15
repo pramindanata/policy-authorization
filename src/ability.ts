@@ -20,6 +20,17 @@ export class Ability {
       throw new ActionNotFoundException(action);
     }
 
+    const preCheckMethod = policy['before'] as AnyFunction<boolean> | undefined;
+    let isSkipped = false;
+
+    if (preCheckMethod) {
+      isSkipped = preCheckMethod.apply(policy, [this.user, action]);
+    }
+
+    if (isSkipped) {
+      return true;
+    }
+
     return policyMethod.apply(policy, [this.user, subject]);
   }
 
@@ -50,6 +61,10 @@ export class ActionNotFoundException extends Error {
   constructor(action: string) {
     super(`Action "${action}" does not found`);
   }
+}
+
+export interface WithPreCheck<U = any, A = string> {
+  before(user: U, action: A): boolean;
 }
 
 export interface SubjectPolicyDict {
