@@ -1,7 +1,7 @@
 {
-  "name": "policy-authorization",
+  "name": "sand-castle",
   "version": "0.0.0",
-  "description": "Policy based authorization inspired from Laravel",
+  "description": "Small policy based authorization library inspired from Laravel.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
