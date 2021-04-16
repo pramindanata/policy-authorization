@@ -1,6 +1,6 @@
-# Sand Castle
+# Policy Authorization
 
-![Build Status](https://github.com/pramindanata/sand-castle/actions/workflows/build.yml/badge.svg)
+![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/build.yml/badge.svg)
 
 > Small policy based authorization library inspired from Laravel.
 
@@ -18,7 +18,7 @@ There are 4 basic concept used in this library:
 ## Installation
 
 ```bash
-npm install sand-castle
+npm install policy-authorization
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ npm install sand-castle
 ### Example
 
 ```ts
-import { Ability } from 'sand-castle';
+import { Ability } from 'policy-authorization';
 
 // Your user class
 class User {
@@ -115,7 +115,7 @@ In the example above, `PostPolicy` has 5 actions (`viewAny`, `view`, `create`, `
 You may want to skip any authorization logic within a policy if some conditions are met. For example, user with `ADMIN` role is allowed to do any action on `Post` subject. To do this, you can implement `WithPreCheck` interface on `Blog` policy and define a `before` method. `before` method will be executed before any other method on the policy. Here is the example:
 
 ```ts
-import { Ability, WithPreCheck } from 'sand-castle';
+import { Ability, WithPreCheck } from 'policy-authorization';
 
 class PostPolicy implements WithPreCheck {
   before(user: User, action: string): boolean | undefined{
@@ -139,7 +139,7 @@ Other authorization checks will be skipped if `before` method returns `boolean`.
 To authorize user action you need to create `Ability` instance. Here is an example of creating `Ability instance`:
 
 ```ts
-import { Ability } from 'sand-castle';
+import { Ability } from 'policy-authorization';
 
 const ability = new Ability(user, {
   [Post.name]: new PostPolicy(),
@@ -156,7 +156,7 @@ const ability = new Ability(user, {
 You can also use `AbilityFactory` class to create `Ability` instance. Here is the example:
 
 ```ts
-import { Ability, AbilityFactory } from 'sand-castle';
+import { Ability, AbilityFactory } from 'policy-authorization';
 
 const factory = new AbilityFactory({
   [Post.name]: PostPolicy,
@@ -184,7 +184,7 @@ So, if you want to auto inject policy depedencies using a DI library then you mu
 You can use `ability.can` or `ability.cannot` method to authorize user action on given subject. Here is the example:
 
 ```ts
-import { Ability } from 'sand-castle';
+import { Ability } from 'policy-authorization';
 
 const ability = new Ability(/** */);
 
@@ -272,4 +272,4 @@ Return `Ability` instance.
 
 ## License
 
-[MIT](https://github.com/pramindanata/sand-castle/blob/master/LICENSE)
+[MIT](https://github.com/pramindanata/policy-authorization/blob/master/LICENSE)

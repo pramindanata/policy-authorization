@@ -1,5 +1,5 @@
 {
-  "name": "sand-castle",
+  "name": "policy-authorization",
   "version": "0.0.0",
   "description": "Small policy based authorization library inspired from Laravel.",
   "main": "./dist/index.js",
