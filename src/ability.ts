@@ -21,17 +21,18 @@ export class Ability {
     }
 
     const preCheckMethod = policy['before'] as AnyFunction<boolean> | undefined;
-    let isSkipped = false;
 
     if (preCheckMethod) {
-      isSkipped = preCheckMethod.apply(policy, [this.user, action]);
+      const isSkipped = preCheckMethod.apply(policy, [this.user, action]);
+
+      if (typeof isSkipped === 'boolean') return isSkipped;
     }
 
-    if (isSkipped) {
-      return true;
+    if (typeof subject === 'object') {
+      return policyMethod.apply(policy, [this.user, subject]);
     }
 
-    return policyMethod.apply(policy, [this.user, subject]);
+    return policyMethod.apply(policy, [this.user]);
   }
 
   cannot(action: string, subject: Subject): boolean {
@@ -64,7 +65,7 @@ export class ActionNotFoundException extends Error {
 }
 
 export interface WithPreCheck<U = any, A = string> {
-  before(user: U, action: A): boolean;
+  before(user: U, action: A): boolean | undefined;
 }
 
 export interface SubjectPolicyDict {

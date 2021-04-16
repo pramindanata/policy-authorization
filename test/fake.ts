@@ -8,7 +8,7 @@ export class User {
   constructor(props: UserProps) {
     this.id = props.id;
     this.name = props.name;
-    this.role = props.role || 'AUTHOR';
+    this.role = props.role;
   }
 }
 
@@ -24,13 +24,15 @@ export class Book {
   }
 }
 
-export class BookPolicy {
-  viewAny(): boolean {
-    return true;
-  }
+export class BookPolicy implements WithPreCheck {
+  before(user: User): boolean | undefined {
+    if (user.role === 'ADMIN') {
+      return true;
+    }
 
-  view(): boolean {
-    return true;
+    if (user.role === 'GUEST') {
+      return false;
+    }
   }
 
   create(): boolean {
@@ -40,26 +42,12 @@ export class BookPolicy {
   update(user: User, book: Book): boolean {
     return user.id === book.userId;
   }
-
-  delete(user: User, book: Book): boolean {
-    return user.id === book.userId;
-  }
-}
-
-export class BookPolicyWithBefore implements WithPreCheck<User> {
-  before(user: User, action: string): boolean {
-    return user.role === 'ADMIN';
-  }
-
-  create(): boolean {
-    return false;
-  }
 }
 
 export interface UserProps {
   id: number;
   name: string;
-  role?: string;
+  role: string;
 }
 
 export interface BookProps {

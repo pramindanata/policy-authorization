@@ -112,7 +112,27 @@ In the example above, `PostPolicy` has 5 actions (`viewAny`, `view`, `create`, `
 
 ### Perform Pre-authorization Check
 
-`(WIP)`
+You may want to skip any authorization logic within a policy if some conditions are met. For example, user with `ADMIN` role is allowed to do any action on `Post` subject. To do this, you can implement `WithPreCheck` interface on `Blog` policy and define a `before` method. `before` method will be executed before any other method on the policy. Here is the example:
+
+```ts
+import { Ability, WithPreCheck } from 'sand-castle';
+
+class PostPolicy implements WithPreCheck {
+  before(user: User, action: string): boolean | undefined{
+    if (user.role === 'ADMIN') {
+      return true;
+    }
+
+    if (user.role === 'GUEST') {
+      return false;
+    }
+  }
+
+  // other action methods
+}
+```
+
+Other authorization checks will be skipped if `before` method returns `boolean`. If `undefined` is returned, the authorization check will fall through to the policy method.
 
 ### Creating Ability
 

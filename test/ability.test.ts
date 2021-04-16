@@ -1,113 +1,207 @@
 import {
   Ability,
-  AbilityFactory,
   ActionNotFoundException,
   PolicyNotFoundException,
 } from '../src';
-import { Book, BookPolicy, BookPolicyWithBefore, User } from './fake';
+import { Book, User } from './fake';
+
+jest.mock('./fake');
 
 describe('# Ability', () => {
-  let factory: AbilityFactory;
   let user: User;
   let book: Book;
+  let bookPolicy: { before: jest.Mock; create: jest.Mock };
 
   beforeEach(() => {
-    user = new User({ id: 1, name: 'User' });
+    user = new User({ id: 1, name: 'User', role: 'AUTHOR' });
     book = new Book({ id: 1, name: 'Book A', userId: user.id });
 
-    factory = new AbilityFactory({
-      [Book.name]: BookPolicy,
-    });
+    bookPolicy = {
+      before: jest.fn(),
+      create: jest.fn(),
+    };
   });
 
   describe('## can', () => {
-    it('should return true on action "view" by passing subject name', () => {
-      const ability = factory.createForUser(user);
-      const result = ability.can('view', 'Book');
+    it('should call action method', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
 
-      expect(result).toEqual(true);
+      ability.can('create', Book);
+
+      expect(bookPolicy.create).toHaveBeenCalled();
     });
 
-    it('should return true on action "view" by passing subject instance', () => {
-      const ability = factory.createForUser(user);
-      const result = ability.can('view', book);
+    it('should return returned action method value', () => {
+      const fakeResult = 'fakeResult';
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
 
-      expect(result).toEqual(true);
-    });
+      bookPolicy.create.mockReturnValue(fakeResult);
 
-    it('should return true on action "view" by passing subject constructor', () => {
-      const ability = factory.createForUser(user);
-      const result = ability.can('view', Book);
+      const result = ability.can('create', Book);
 
-      expect(result).toEqual(true);
+      expect(result).toEqual(fakeResult);
     });
 
     it('should throw error if policy not found', () => {
       class OtherModel {}
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
 
-      const ability = factory.createForUser(user);
-      const result = () => ability.can('view', OtherModel);
+      const result = () => ability.can('create', OtherModel);
 
       expect(result).toThrow(PolicyNotFoundException);
     });
 
     it('should throw error if invalid action given', () => {
-      const ability = factory.createForUser(user);
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
       const result = () => ability.can('do-something', book);
 
       expect(result).toThrow(ActionNotFoundException);
     });
 
-    it('should return true on action "update" with correct book', () => {
-      const ability = factory.createForUser(user);
-      const result = ability.can('update', book);
+    describe('### pass subject name', () => {
+      it('should skip pass user instance to action method', () => {
+        const ability = new Ability(user, {
+          [Book.name]: bookPolicy,
+        });
 
-      expect(result).toEqual(true);
+        ability.can('create', 'Book');
+
+        expect(bookPolicy.create.mock.calls[0][0]).toBe(user);
+        expect(bookPolicy.create.mock.calls[0][1]).toBe(undefined);
+      });
     });
 
-    it('should return false on action "update" with invalid book', () => {
-      const ability = factory.createForUser(user);
-      const otherBook = new Book({ id: 1, name: 'Book B', userId: 200 });
-      const result = ability.can('update', otherBook);
+    describe('### pass subject constructor', () => {
+      it('should skip pass user instance to action method', () => {
+        const ability = new Ability(user, {
+          [Book.name]: bookPolicy,
+        });
 
-      expect(result).toEqual(false);
+        ability.can('create', Book);
+
+        expect(bookPolicy.create.mock.calls[0][0]).toBe(user);
+        expect(bookPolicy.create.mock.calls[0][1]).toBe(undefined);
+      });
+    });
+
+    describe('### pass subject instance', () => {
+      it('should pass user and subject instance to action method', () => {
+        const ability = new Ability(user, {
+          [Book.name]: bookPolicy,
+        });
+
+        ability.can('create', book);
+
+        expect(bookPolicy.create.mock.calls[0][0]).toBe(user);
+        expect(bookPolicy.create.mock.calls[0][1]).toBe(book);
+      });
     });
   });
 
   describe('## cannot', () => {
-    it('should call negative this.can()', () => {
-      const ability = factory.createForUser(user);
-      const canMethodMockValue = true;
+    it('should call negative this.can() value', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
 
-      jest.spyOn(ability, 'can').mockReturnValueOnce(canMethodMockValue);
+      jest.spyOn(ability, 'can').mockReturnValue(true);
+      const result = ability.cannot('create', book);
 
-      const result = ability.cannot('update', book);
+      expect(result).toEqual(false);
+    });
 
-      expect(result).toEqual(!canMethodMockValue);
+    it('should call this.can()', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      jest.spyOn(ability, 'can');
+      ability.cannot('create', book);
+
+      const canMethodMock = ability.can as jest.Mock;
+
       expect(ability.can).toHaveBeenCalled();
-      expect(ability.can).toHaveBeenCalledWith('update', book);
+      expect(canMethodMock.mock.calls[0][0]).toBe('create');
+      expect(canMethodMock.mock.calls[0][1]).toBe(book);
     });
   });
 
-  describe('## Pre-check authorization logic', () => {
-    it('should return true on action "create" if user is an ADMIN', () => {
-      const admin = new User({ id: 1, name: 'Admin', role: 'ADMIN' });
-      const ability = new Ability(admin, {
-        [Book.name]: new BookPolicyWithBefore(),
+  describe('## pre-authorization check', () => {
+    it('should call before()', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
       });
+
+      jest.spyOn(bookPolicy, 'before');
+      ability.can('create', book);
+
+      expect(bookPolicy.before).toHaveBeenCalled();
+      expect(bookPolicy.before.mock.calls[0][0]).toBe(user);
+      expect(bookPolicy.before.mock.calls[0][1]).toBe('create');
+    });
+
+    it('should return true if before() is authorized', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      jest.spyOn(bookPolicy, 'before').mockReturnValue(true);
       const result = ability.can('create', book);
 
       expect(result).toEqual(true);
     });
 
-    it('should return false on action "create" if user is an AUTHOR', () => {
-      const admin = new User({ id: 1, name: 'Admin', role: 'AUTHOR' });
-      const ability = new Ability(admin, {
-        [Book.name]: new BookPolicyWithBefore(),
+    it('should return false if before() is unauthorized', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
       });
+
+      jest.spyOn(bookPolicy, 'before').mockReturnValue(false);
       const result = ability.can('create', book);
 
       expect(result).toEqual(false);
+    });
+
+    it('should not call any action method if before() is returning true', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      bookPolicy.before.mockReturnValue(true);
+      ability.can('create', book);
+
+      expect(bookPolicy.create).not.toHaveBeenCalled();
+    });
+
+    it('should not call any action method if before() is returning false', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      bookPolicy.before.mockReturnValue(false);
+      ability.can('create', book);
+
+      expect(bookPolicy.create).not.toHaveBeenCalled();
+    });
+
+    it('should call any action method if before() is returning undefined', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      bookPolicy.before.mockReturnValue(undefined);
+      ability.can('create', book);
+
+      expect(bookPolicy.create).toHaveBeenCalled();
     });
   });
 });
