@@ -1,6 +1,6 @@
 # Sand Castle
 
-![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/build.yml/badge.svg)
+![Build Status](https://github.com/pramindanata/sand-castle/actions/workflows/build.yml/badge.svg)
 
 > Small policy based authorization library inspired from Laravel.
 
@@ -18,7 +18,7 @@ There are 4 basic concept used in this library:
 ## Installation
 
 ```bash
-npm install policy-authorization
+npm install sand-castle
 ```
 
 ## Usage
@@ -272,4 +272,4 @@ Return `Ability` instance.
 
 ## License
 
-[MIT](https://github.com/pramindanata/policy-authorization/blob/master/LICENSE)
+[MIT](https://github.com/pramindanata/sand-castle/blob/master/LICENSE)

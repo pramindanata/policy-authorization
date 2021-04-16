@@ -14,7 +14,7 @@ describe('# AbilityFactory', () => {
       [Book.name]: BookPolicy,
     });
 
-    user = new User({ id: 1, name: 'User' });
+    user = new User({ id: 1, name: 'User', role: 'AUTHOR' });
   });
 
   describe('## create()', () => {
