@@ -1,12 +1,16 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'jest'],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'plugin:jest/recommended',
     'prettier',
   ],
+  env: {
+    'jest/globals': true,
+  },
   root: true,
   rules: {
     '@typescript-eslint/no-namespace': 'off',

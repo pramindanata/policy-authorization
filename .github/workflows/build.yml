@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Depedencies
+        run: npm ci
+      - name: Run Linter
+        run: npm run lint -- --ext .js,.ts ./
+      - name: Run Tests 
+        run: npm run test -- --runInBand --coverage --ci
