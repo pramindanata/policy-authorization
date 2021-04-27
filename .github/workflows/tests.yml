@@ -25,7 +25,7 @@ jobs:
       - name: Run Linter
         run: npm run lint -- --ext .js,.ts ./
       - name: Run Tests 
-        run: npm run test -- --coverage --ci && coveralls < coverage/lcov.info
+        run: npm run test:cov
       - name: Coveralls
         uses: coverallsapp/github-action@v1.1.2
         with:
