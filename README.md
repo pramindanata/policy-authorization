@@ -1,6 +1,7 @@
 # Policy Authorization
 
 ![Test Status](https://github.com/pramindanata/policy-authorization/actions/workflows/tests.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/pramindanata/policy-authorization/badge.svg?branch=master)](https://coveralls.io/github/pramindanata/policy-authorization?branch=master)
 
 > Small policy based authorization library inspired from Laravel.
 
