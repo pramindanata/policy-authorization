@@ -1,6 +1,6 @@
 # Policy Authorization
 
-![Build Status](https://github.com/pramindanata/policy-authorization/actions/workflows/build.yml/badge.svg)
+![Test Status](https://github.com/pramindanata/policy-authorization/actions/workflows/tests.yml/badge.svg)
 
 > Small policy based authorization library inspired from Laravel.
 
