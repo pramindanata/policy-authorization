@@ -68,7 +68,7 @@ describe('# Ability', () => {
     });
 
     describe('### pass subject name', () => {
-      it('should skip pass user instance to action method', () => {
+      it('should pass undefined subject model to action method', () => {
         const ability = new Ability(user, {
           [Book.name]: bookPolicy,
         });
@@ -81,7 +81,7 @@ describe('# Ability', () => {
     });
 
     describe('### pass subject constructor', () => {
-      it('should skip pass user instance to action method', () => {
+      it('should pass undefined subject model to action method', () => {
         const ability = new Ability(user, {
           [Book.name]: bookPolicy,
         });
@@ -108,7 +108,18 @@ describe('# Ability', () => {
   });
 
   describe('## cannot', () => {
-    it('should call negative this.can() value', () => {
+    it('should return true if action is unauthorized', () => {
+      const ability = new Ability(user, {
+        [Book.name]: bookPolicy,
+      });
+
+      jest.spyOn(ability, 'can').mockReturnValue(false);
+      const result = ability.cannot('create', book);
+
+      expect(result).toEqual(true);
+    });
+
+    it('should return false if action is authorized', () => {
       const ability = new Ability(user, {
         [Book.name]: bookPolicy,
       });
