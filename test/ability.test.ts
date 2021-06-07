@@ -5,8 +5,6 @@ import {
 } from '../src';
 import { Book, User } from './fake';
 
-jest.mock('./fake');
-
 describe('# Ability', () => {
   let user: User;
   let book: Book;
