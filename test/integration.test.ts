@@ -82,7 +82,7 @@ describe('# Integration', () => {
       expect(result).toEqual(false);
     });
 
-    it('should return false on action "create" if user is an GUEST', () => {
+    it('should return false on action "create" if user is a GUEST', () => {
       const author = new User({ id: 1, name: 'Admin', role: 'GUEST' });
       const ability = factory.createForUser(author);
       const result = ability.can('update', Book);
